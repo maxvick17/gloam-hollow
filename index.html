@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Gloam Hollow: A Lantern Walk</title>
+<meta name="description" content="Seven lost ember-wisps. One lantern. A desert ghost town that goes dark at the seventh bell. A spooky, gentle browser exploration game built with Kiro for Kiroween 2026.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main id="game" aria-label="Gloam Hollow: A Lantern Walk">
+
+  <!-- HUD -->
+  <header id="hud" class="hidden">
+    <div class="hud-left">
+      <div id="oil-wrap" title="Lantern oil">
+        <span class="hud-icon" aria-hidden="true">🪔</span>
+        <div id="oil-bar"><div id="oil-fill"></div></div>
+      </div>
+      <div id="tolls" title="The Hollow Bell"></div>
+    </div>
+    <div class="hud-center">
+      <div id="scene-name">Well Square</div>
+      <div id="objective">Wisps returned: 0 / 7</div>
+    </div>
+    <div class="hud-right">
+      <div id="carried" title="Wisps carried"></div>
+      <button id="mute-btn" class="hud-btn" aria-label="Mute sound">🔊</button>
+      <button id="help-btn" class="hud-btn" aria-label="How to play">?</button>
+    </div>
+  </header>
+
+  <!-- Stage -->
+  <section id="stage" aria-label="The town of Gloam Hollow">
+    <svg id="world" viewBox="0 0 960 540" preserveAspectRatio="xMidYMid meet" role="img" aria-label="A desert ghost town at night"></svg>
+    <div id="dark" aria-hidden="true"></div>
+    <div id="glow" aria-hidden="true"></div>
+    <div id="sparkle" class="hidden" aria-hidden="true"></div>
+    <div id="keeper" aria-hidden="true">
+      <svg viewBox="0 0 60 96" width="100%" height="100%">
+        <g stroke="#0d0b08" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+          <path d="M14 96 L20 58 Q21 50 30 50 Q39 50 40 58 L46 96 Z" fill="#2e4a5a"/>
+          <circle cx="30" cy="38" r="12" fill="#e8e0cc"/>
+          <path d="M16 34 Q30 14 44 34 L42 28 Q30 20 18 28 Z" fill="#59331d"/>
+          <path d="M40 62 Q52 64 52 54" fill="none"/>
+          <g>
+            <rect x="47" y="42" width="12" height="16" rx="2" fill="#f2a33c"/>
+            <path d="M50 42 Q53 36 56 42" fill="none"/>
+            <circle cx="53" cy="50" r="3.4" fill="#ffe9b0" stroke="none"/>
+          </g>
+        </g>
+      </svg>
+      <div id="carried-wisps"></div>
+    </div>
+    <button id="nav-left" class="nav-arrow hidden" aria-label="Go to the previous place">◀</button>
+    <button id="nav-right" class="nav-arrow hidden" aria-label="Go to the next place">▶</button>
+    <div id="caption" class="hidden" role="status"></div>
+  </section>
+
+  <!-- Dialogue -->
+  <section id="dialogue" class="panel hidden" aria-live="polite">
+    <div id="dlg-name"></div>
+    <p id="dlg-text"></p>
+    <div id="dlg-next">tap, click, or press Space ▸</div>
+  </section>
+
+  <!-- Title screen -->
+  <section id="title-screen" class="overlay">
+    <div class="overlay-card">
+      <div class="title-bell" aria-hidden="true">🔔</div>
+      <h1>Gloam Hollow</h1>
+      <h2>A Lantern Walk</h2>
+      <p class="tagline">Seven lost ember-wisps. One lantern.<br>A desert ghost town that goes dark at the seventh bell.</p>
+      <p class="intro">Tonight you are the new lantern keeper of Gloam Hollow. Its seven ember-wisps have scattered into the dark. Walk the town by lamplight, mind your oil, mind the Hollow Bell — and carry every wisp home to the old town well before the seventh toll.</p>
+      <button id="begin-btn" class="big-btn">Light the lantern</button>
+      <div class="controls-grid">
+        <div><strong>Walk</strong><span>Move the mouse / touch, or ← → and A / D</span></div>
+        <div><strong>Light</strong><span>Scroll wheel or pinch to widen / narrow</span></div>
+        <div><strong>Interact</strong><span>Click or tap wisps, ghosts, tins &amp; treasures</span></div>
+        <div><strong>Travel</strong><span>Walk to a glowing edge, use the arrows, or Q / E</span></div>
+      </div>
+      <p class="fineprint">A spooky, gentle game. The scares are atmosphere, never jumpscares.<br>Built with Kiro for Kiroween 2026 · Monsoon Marquee</p>
+    </div>
+  </section>
+
+  <!-- Help -->
+  <section id="help-screen" class="overlay hidden">
+    <div class="overlay-card">
+      <h2>How to keep the Hollow</h2>
+      <ul class="help-list">
+        <li>🔦 Your lantern light follows you. A <em>wide</em> light searches faster but drinks oil; a <em>narrow</em> light sips it.</li>
+        <li>🪔 Oil lasts about seven minutes. Hidden oil tins refill it. If the lantern dies, the walk is over.</li>
+        <li>🔔 The Hollow Bell tolls once a minute. At the <strong>seventh toll</strong>, midnight — unreturned wisps scatter and the night is lost.</li>
+        <li>✨ Click a wisp your light has found to carry it. You can carry <strong>two</strong> at a time. Walk them to the town well in Well Square to set them to rest.</li>
+        <li>👻 The town's three ghosts are friendly. Talk to them — one of them has lost something in the arroyo.</li>
+      </ul>
+      <button id="help-close" class="big-btn">Back to the walk</button>
+    </div>
+  </section>
+
+  <!-- End screen -->
+  <section id="end-screen" class="overlay hidden">
+    <div class="overlay-card">
+      <div id="end-emoji" aria-hidden="true">🏮</div>
+      <h2 id="end-title">The Hollow is lit</h2>
+      <p id="end-text"></p>
+      <p id="end-stats"></p>
+      <button id="again-btn" class="big-btn">Walk again</button>
+    </div>
+  </section>
+
+</main>
+<script src="game.js"></script>
+</body>
+</html>

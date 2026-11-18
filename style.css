@@ -1,0 +1,193 @@
+/* Gloam Hollow: A Lantern Walk — coloring-book night: ink black, bone white, lantern amber */
+:root{
+  --ink:#0d0b08;
+  --bone:#e8e0cc;
+  --amber:#f2a33c;
+  --amber-soft:#ffd98a;
+  --night:#05060a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:#020308;
+  color:var(--bone);
+  font-family:Georgia,'Iowan Old Style','Times New Roman',serif;
+  display:flex;align-items:center;justify-content:center;
+  min-height:100vh;overflow:hidden;
+  -webkit-user-select:none;user-select:none;
+  -webkit-tap-highlight-color:transparent;
+}
+.hidden{display:none !important}
+
+#game{
+  width:min(97vw,1100px);
+  display:flex;flex-direction:column;gap:8px;
+  padding:10px;
+}
+
+/* ---------- HUD ---------- */
+#hud{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  background:#0a0c14;border:2px solid #2a2416;border-radius:12px;
+  padding:7px 12px;min-height:52px;
+}
+.hud-left,.hud-right{display:flex;align-items:center;gap:12px}
+.hud-center{text-align:center;flex:1;min-width:0}
+#scene-name{font-size:19px;letter-spacing:.06em;color:var(--amber-soft);white-space:nowrap}
+#objective{font-size:12.5px;opacity:.85;white-space:nowrap}
+#oil-wrap{display:flex;align-items:center;gap:7px}
+.hud-icon{font-size:19px}
+#oil-bar{
+  width:110px;height:13px;border:2px solid var(--ink);border-radius:7px;
+  background:#1c1710;outline:1px solid #4a3a1c;overflow:hidden;
+}
+#oil-fill{
+  height:100%;width:100%;
+  background:linear-gradient(90deg,#b35c14,var(--amber),var(--amber-soft));
+  transition:width .3s linear;
+}
+#oil-bar.low #oil-fill{background:linear-gradient(90deg,#7e1414,#c22e1e,#e06a2e)}
+#tolls{display:flex;gap:3px;font-size:14px}
+#tolls .tolled{filter:none;opacity:1;text-shadow:0 0 7px var(--amber)}
+#tolls .untolled{opacity:.22;filter:grayscale(1)}
+#carried{display:flex;gap:4px;font-size:15px;min-width:44px}
+#carried .slot{
+  width:19px;height:19px;border-radius:50%;border:2px dashed #55482a;
+  display:flex;align-items:center;justify-content:center;font-size:12px;
+}
+#carried .slot.full{border:2px solid var(--amber);background:radial-gradient(circle,#ffdf9e,#e07f1f);box-shadow:0 0 9px var(--amber)}
+.hud-btn{
+  background:#181410;color:var(--bone);border:2px solid #4a3a1c;border-radius:9px;
+  width:34px;height:34px;font-size:16px;cursor:pointer;font-family:inherit;
+}
+.hud-btn:hover{border-color:var(--amber)}
+
+/* ---------- Stage ---------- */
+#stage{
+  --lx:50%; --ly:78%; --lr:170px;
+  position:relative;width:100%;aspect-ratio:16/9;
+  border:3px solid #2a2416;border-radius:14px;overflow:hidden;
+  background:var(--night);
+  touch-action:none;cursor:crosshair;
+}
+#world{position:absolute;inset:0;width:100%;height:100%;display:block}
+#dark{
+  position:absolute;inset:0;pointer-events:none;z-index:3;
+  background:radial-gradient(circle var(--lr) at var(--lx) var(--ly),
+    rgba(3,4,8,0) 0%, rgba(3,4,8,.10) 55%, rgba(3,4,8,.80) 82%, rgba(3,4,8,.925) 100%);
+  transition:opacity 1.2s ease;
+}
+#glow{
+  position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:2;
+  background:radial-gradient(circle calc(var(--lr)*.92) at var(--lx) var(--ly),
+    rgba(255,176,66,.30) 0%, rgba(255,150,40,.10) 55%, rgba(255,140,30,0) 100%);
+  mix-blend-mode:screen;
+}
+#stage.lit #dark{opacity:.12}
+#stage.lit #glow{
+  background:radial-gradient(circle 90% at 50% 55%,
+    rgba(255,190,80,.34) 0%, rgba(255,160,50,.12) 60%, rgba(255,140,30,0) 100%);
+}
+#keeper{
+  position:absolute;z-index:4;width:44px;height:70px;pointer-events:none;
+  left:0;top:0;will-change:transform;
+  filter:drop-shadow(0 4px 5px rgba(0,0,0,.55));
+}
+#carried-wisps{position:absolute;left:-14px;top:-16px;width:74px;height:30px;pointer-events:none}
+#carried-wisps .cw{
+  position:absolute;width:13px;height:13px;border-radius:50%;
+  background:radial-gradient(circle,#fff3c4,#ffb52e 60%,rgba(255,140,20,0));
+  box-shadow:0 0 10px 3px rgba(255,170,50,.75);
+  animation:bob 1.6s ease-in-out infinite;
+}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+#sparkle{
+  position:absolute;z-index:4;width:15px;height:15px;margin:-7px 0 0 -7px;border-radius:50%;
+  background:radial-gradient(circle,#fff8dc,#ffd35e 55%,rgba(255,200,60,0));
+  box-shadow:0 0 13px 5px rgba(255,205,80,.65);pointer-events:none;
+  animation:sparkle-pulse 1.15s ease-in-out infinite;
+}
+@keyframes sparkle-pulse{0%,100%{transform:scale(.7);opacity:.65}50%{transform:scale(1.25);opacity:1}}
+.nav-arrow{
+  position:absolute;top:50%;transform:translateY(-50%);z-index:5;
+  width:40px;height:64px;border-radius:10px;cursor:pointer;
+  background:rgba(10,10,14,.55);color:var(--amber-soft);
+  border:2px solid rgba(242,163,60,.55);font-size:17px;
+  animation:edge-glow 1.8s ease-in-out infinite;
+}
+#nav-left{left:8px}
+#nav-right{right:8px}
+@keyframes edge-glow{0%,100%{box-shadow:0 0 4px rgba(242,163,60,.25)}50%{box-shadow:0 0 15px rgba(242,163,60,.65)}}
+#caption{
+  position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:6;
+  background:rgba(5,6,10,.88);border:2px solid var(--amber);border-radius:11px;
+  color:var(--amber-soft);padding:8px 18px;font-size:16.5px;letter-spacing:.04em;
+  text-align:center;max-width:88%;pointer-events:none;
+  box-shadow:0 0 18px rgba(242,163,60,.35);
+}
+
+/* ---------- World SVG bits ---------- */
+.clickable{cursor:pointer}
+.wisp-core{animation:flick 1.3s ease-in-out infinite}
+@keyframes flick{0%,100%{opacity:.92}45%{opacity:.65}60%{opacity:1}}
+.ghost-body{animation:hover 3.4s ease-in-out infinite}
+@keyframes hover{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.tower-rays{animation:rays 2.6s ease-in-out infinite;transform-origin:480px 96px}
+@keyframes rays{0%,100%{opacity:.55}50%{opacity:.95}}
+
+/* ---------- Dialogue ---------- */
+.panel{
+  background:#0a0c14;border:2px solid var(--amber);border-radius:12px;
+  padding:13px 18px 9px;min-height:104px;cursor:pointer;
+  box-shadow:0 4px 22px rgba(0,0,0,.6);
+}
+#dlg-name{color:var(--amber);font-size:14px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:5px}
+#dlg-text{font-size:17.5px;line-height:1.45;min-height:50px}
+#dlg-next{text-align:right;font-size:12px;opacity:.6;margin-top:3px}
+
+/* ---------- Overlays ---------- */
+.overlay{
+  position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;
+  background:rgba(2,3,6,.9);padding:14px;overflow-y:auto;
+}
+.overlay-card{
+  max-width:620px;width:100%;text-align:center;
+  background:#0a0c14;border:3px solid var(--amber);border-radius:18px;
+  padding:30px 34px 26px;box-shadow:0 0 44px rgba(242,163,60,.22);
+}
+.overlay-card h1{font-size:47px;letter-spacing:.05em;color:var(--amber-soft);font-variant:small-caps}
+.overlay-card h2{font-size:22px;letter-spacing:.22em;color:var(--amber);text-transform:uppercase;margin:2px 0 12px;font-weight:normal}
+.title-bell{font-size:36px;animation:hover 3s ease-in-out infinite}
+.tagline{font-size:17.5px;font-style:italic;line-height:1.5;margin-bottom:13px}
+.intro{font-size:15px;line-height:1.55;opacity:.92;margin-bottom:19px}
+.big-btn{
+  background:linear-gradient(180deg,#ffb52e,#e07f1f);color:#241300;
+  border:3px solid var(--ink);border-radius:13px;
+  font-family:inherit;font-size:19px;font-weight:bold;letter-spacing:.03em;
+  padding:12px 30px;cursor:pointer;box-shadow:0 4px 0 #7a4a08,0 0 20px rgba(242,163,60,.4);
+}
+.big-btn:hover{filter:brightness(1.09)}
+.big-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #7a4a08}
+.controls-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:22px 0 13px;text-align:left;
+}
+.controls-grid div{background:#12101c;border:1.5px solid #38301c;border-radius:9px;padding:8px 11px}
+.controls-grid strong{display:block;color:var(--amber-soft);font-size:13px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px}
+.controls-grid span{font-size:13.5px;opacity:.9;line-height:1.35;display:block}
+.fineprint{font-size:12.5px;opacity:.62;line-height:1.5}
+.help-list{text-align:left;font-size:15.5px;line-height:1.5;margin:6px 0 20px 18px}
+.help-list li{margin-bottom:9px}
+#end-emoji{font-size:42px}
+#end-title{font-size:30px}
+#end-text{font-size:16.5px;line-height:1.55;margin-bottom:10px}
+#end-stats{font-size:15px;color:var(--amber-soft);margin-bottom:20px}
+
+@media (max-width:640px){
+  .overlay-card h1{font-size:36px}
+  .overlay-card{padding:22px 18px}
+  .controls-grid{grid-template-columns:1fr}
+  #scene-name{font-size:15px}
+  #objective{font-size:11px}
+  #oil-bar{width:70px}
+  #dlg-text{font-size:16px}
+}

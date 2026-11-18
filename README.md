@@ -12,7 +12,15 @@ This project is built with Kiro from spec to ship. The design specs and steering
 
 ## Status
 
-In development for Kiroween 2026 (build window Nov 18 – Dec 2, 2026). The playable build will be hosted from this repo.
+Playable build complete (Nov 17, 2026) — the full game: six scenes, seven wisps, three ghosts, oil and bell pressure, win and fail states. Play it here: https://maxvick17.github.io/gloam-hollow/
+
+## How to play
+
+- **Walk:** move the mouse or touch; the keeper (and the light) follows. Keyboard: ←/→ or A/D.
+- **Light:** scroll wheel, pinch, or W/S — wide light searches faster and burns oil faster.
+- **Interact:** click or tap wisps, ghosts, oil tins, and anything pale that glimmers.
+- **Travel:** walk to a glowing edge, use the on-screen arrows, or press Q/E.
+- **Goal:** carry the seven ember-wisps (two at a time) back to the town well in Well Square before the Hollow Bell's seventh toll — and don't let the lantern die.
 
 ## License
 
